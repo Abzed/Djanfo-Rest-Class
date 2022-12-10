@@ -10,8 +10,8 @@ class UserSerializer(serializers.ModelSerializer):
     
     
     class Meta:
-        model = User
-        exclude = ("last_login", "is_superuser", "is_staff", "is_active", "date_joined", "user_permissions", "groups")
+        model = SystemUser
+        exclude = ("last_login", "is_superuser", "is_staff", "is_active", "user_permissions", "groups")
 
 class StudentSerializer(serializers.ModelSerializer):
     account = UserSerializer()
@@ -63,73 +63,72 @@ class StudentSerializer(serializers.ModelSerializer):
 
 
 class ClassroomSerializer(serializers.ModelSerializer):
-    student = StudentSerializer()
     class Meta:
         model = Classroom
         fields = '__all__'
         
-    def create(self, validated_data):
-        from django.db import transaction
+    # def create(self, validated_data):
+    #     from django.db import transaction
         
-        with transaction.atomic():
-            student_data = validated_data.pop("student")
-            data = student_data['account']
+    #     with transaction.atomic():
+    #         student_data = validated_data.pop("student")
+    #         data = student_data['account']
             
-            email = data["email"]
-            username = data["username"]
-            first_name = data["first_name"]
-            last_name = data["last_name"]
-            password = make_password(data["password"])
+    #         email = data["email"]
+    #         username = data["username"]
+    #         first_name = data["first_name"]
+    #         last_name = data["last_name"]
+    #         password = make_password(data["password"])
             
-            account = User.objects.create(username=username, first_name=first_name, last_name=last_name, 
-                                          email=email, password=password)
+    #         account = User.objects.create(username=username, first_name=first_name, last_name=last_name, 
+    #                                       email=email, password=password)
             
-            avatar = student_data["avatar"]
-            gender = student_data["gender"]
-            location = student_data["location"]
-            stack = student_data["stack"]
+    #         avatar = student_data["avatar"]
+    #         gender = student_data["gender"]
+    #         location = student_data["location"]
+    #         stack = student_data["stack"]
             
-            student = Student.objects.create(account=account, avatar=avatar, gender=gender, 
-                                                 location=location, stack=stack)
-            classroom = Classroom.objects.create(student=student, **validated_data)
+    #         student = Student.objects.create(account=account, avatar=avatar, gender=gender, 
+    #                                              location=location, stack=stack)
+    #         classroom = Classroom.objects.create(student=student, **validated_data)
             
-        return classroom
+    #     return classroom
     
-    def update(self, instance, validated_data):
-        student_data = validated_data.pop('student')
-        account_data = student_data["account"]
-        account = instance.student.account
-        student = instance.student
+    # def update(self, instance, validated_data):
+    #     student_data = validated_data.pop('student')
+    #     account_data = student_data["account"]
+    #     account = instance.student.account
+    #     student = instance.student
 
-        instance.classroom = validated_data.get('classroom', instance.classroom)
-        instance.mentor = validated_data.get('mentor', instance.mentor)
-        instance.save()
+    #     instance.classroom = validated_data.get('classroom', instance.classroom)
+    #     instance.mentor = validated_data.get('mentor', instance.mentor)
+    #     instance.save()
         
-        student.avatar = student_data.get('avatar', student.gender)
-        student.gender = student_data.get('gender', student.gender)
-        student.location = student_data.get('location', student.location)
-        student.stack = student_data.get('stack', student.stack)
-        student.save()
+    #     student.avatar = student_data.get('avatar', student.gender)
+    #     student.gender = student_data.get('gender', student.gender)
+    #     student.location = student_data.get('location', student.location)
+    #     student.stack = student_data.get('stack', student.stack)
+    #     student.save()
 
-        account.username = account_data.get('username', account.username)
+    #     account.username = account_data.get('username', account.username)
         
-        account.first_name = account_data.get('first_name', account.first_name)
+    #     account.first_name = account_data.get('first_name', account.first_name)
         
-        account.last_name = account_data.get(
-            'last_name',
-            account.last_name
-        )
+    #     account.last_name = account_data.get(
+    #         'last_name',
+    #         account.last_name
+    #     )
         
-        account.email = account_data.get(
-            'email',
-            account.email
-        )
+    #     account.email = account_data.get(
+    #         'email',
+    #         account.email
+    #     )
         
-        account.password = make_password(account_data.get(
-            'password',
-            account.password
-        ))
+    #     account.password = make_password(account_data.get(
+    #         'password',
+    #         account.password
+    #     ))
 
-        account.save()
+    #     account.save()
 
-        return instance
+    #     return instance
