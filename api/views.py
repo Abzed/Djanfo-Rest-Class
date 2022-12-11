@@ -9,7 +9,7 @@ from .models import *
 from .permissions import *
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
-
+from rest_framework import authentication
 
 
 def index(request):
@@ -134,18 +134,18 @@ class ClassroomData(APIView):
         return Response({"status": "success", "success": "classroom Deleted"})       
         
         
-class AuthUsers(APIView):
-    authentication_classes = [SessionAuthentication, BasicAuthentication, TokenAuthentication]
-    permission_classes = [IsAuthenticated]
+# class AuthUsers(APIView):
+#     authentication_classes = [SessionAuthentication, BasicAuthentication, TokenAuthentication]
+#     permission_classes = [IsAuthenticated]
 
-    def get(self, request, format=None):
-        content = {
-            'user': str(request.SystemUser.username),  # `django.contrib.auth.User` instance.
-            'auth': str(request.auth),  # None
-        }
-        return Response(content)       
+#     def get(self, request, format=None):
+#         content = {
+#             'user': str(request.SystemUser.username),  # `django.contrib.auth.User` instance.
+#             'auth': str(request.auth),  # None
+#         }
+#         return Response(content)       
         
-             
+import json  
 class CustomAuthToken(ObtainAuthToken):
 
     def post(self, request, *args, **kwargs):
@@ -153,15 +153,17 @@ class CustomAuthToken(ObtainAuthToken):
                                            context={'request': request})
         serializer.is_valid(raise_exception=True)
         user = serializer.validated_data['user']
-        token, created = Token.objects.get_or_create(user=user)
+        token, created = Token.objects.get_or_create(user=user)  
         return Response({
             'token': token.key,
-            'username': SystemUser.username,
-            'first_name': SystemUser.first_name,
-            'last_name': SystemUser.last_name,
-            'user_id': SystemUser.pk,
-            'email': SystemUser.email
-        })     
+            'username': user.username,
+            'first_name': user.first_name,
+            'last_name': user.last_name,
+            'user_id': user.pk,
+            'email': user.email,
+            "avatar": ""
+        })    
+          
         
         
         

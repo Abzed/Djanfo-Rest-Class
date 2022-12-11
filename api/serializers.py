@@ -8,6 +8,11 @@ class UserSerializer(serializers.ModelSerializer):
         validated_data['password'] = make_password(validated_data['password'])
         return super(UserSerializer, self).create(validated_data)
     
+    def update(self, instance, validated_data):
+        password = validated_data.get('password', instance.password)
+        instance.set_password(password)
+        instance.save()
+        return instance    
     
     class Meta:
         model = SystemUser
