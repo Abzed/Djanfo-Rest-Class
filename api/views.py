@@ -145,7 +145,6 @@ class ClassroomData(APIView):
 #         }
 #         return Response(content)       
         
-import json  
 class CustomAuthToken(ObtainAuthToken):
 
     def post(self, request, *args, **kwargs):
@@ -161,7 +160,7 @@ class CustomAuthToken(ObtainAuthToken):
             'last_name': user.last_name,
             'user_id': user.pk,
             'email': user.email,
-            "avatar": ""
+            "avatar": user.avatar.url
         })    
           
         

@@ -69,7 +69,7 @@ class SystemUserAccountManager(BaseUserManager):
 class SystemUser(AbstractBaseUser, PermissionsMixin):
     username = models.CharField(max_length=19, null = True, blank = True, unique=True)    
     phone_number = models.IntegerField(null = True, blank = True)
-    avatar = CloudinaryField('image', folder="student_management")
+    avatar = CloudinaryField('image', folder="sis")
     gender = models.CharField(choices=GENDER, max_length=55, null=True, blank=True)
     first_name = models.CharField(_('first name'), max_length=40)
     last_name = models.CharField(_('last name'), max_length=50)
